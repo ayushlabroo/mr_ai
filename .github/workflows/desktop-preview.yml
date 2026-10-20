@@ -1,0 +1,80 @@
+name: Build desktop preview installers
+
+# Explicitly run from Actions. A Git push never starts a desktop release build.
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-preview
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    # The requested repository is public. Do not consume private-plan allowances.
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create an unsigned-preview draft for review
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+          tag="v$version"
+          if gh release view "$tag" --json isDraft > /tmp/mrai-release.json 2>/dev/null; then
+            node -e 'if (!JSON.parse(require("fs").readFileSync("/tmp/mrai-release.json")).isDraft) process.exit(1)'
+          else
+            gh release create "$tag" --draft --target "$GITHUB_SHA" --title "MrAI $version desktop preview" --notes "Unsigned developer preview. macOS builds are not notarized and Windows builds are not signed. Review and test all installers before publishing. Accounts, cloud sync and the hosted metered AI gateway are not yet implemented."
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: draft
+    if: github.event.repository.private == false
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: --mac --arm64
+          - os: macos-14
+            target: --mac --x64
+          - os: windows-2022
+            target: --win --x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.16.0'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - name: Package unsigned desktop preview
+        run: npm exec --yes --package=electron-builder@26.17.0 -- electron-builder --config electron-builder.json --publish never ${{ matrix.target }}
+      - name: Upload installers to the draft (not Actions artifact storage)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.draft.outputs.tag }}
+        shell: bash
+        run: |
+          draft="$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)"
+          [[ "$draft" == "true" ]] || exit 1
+          shopt -s nullglob
+          files=(release/*.dmg release/*.exe)
+          [[ "${#files[@]}" -gt 0 ]] || exit 1
+          gh release upload "$RELEASE_TAG" "${files[@]}" --clobber

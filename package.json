@@ -1,0 +1,51 @@
+{
+  "name": "mrai-workspace",
+  "productName": "MrAI by Ayush",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A calm, capable workspace for getting things done on your Mac.",
+  "type": "module",
+  "main": "desktop/main.mjs",
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env.desktop scripts/dev.mjs",
+    "dev:web": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "preview:file": "node scripts/preview-file.mjs",
+    "build": "tsc --noEmit && vite build",
+    "start": "node --env-file-if-exists=.env.desktop scripts/start-desktop.mjs",
+    "setup:gateway": "node scripts/setup-gateway.mjs",
+    "gateway": "node --env-file-if-exists=.env.gateway gateway/start.mjs",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:desktop": "node scripts/test-desktop.mjs",
+    "test:gateway:runtime": "node --test tests/runtime/gateway.test.mjs",
+    "verify:runtime": "npm run build && npm run test:gateway:runtime && npm run test:e2e:desktop",
+    "check": "npm run format:check && npm run build && npm test && npm run test:e2e"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "1.1.23",
+    "lucide-react": "0.577.0",
+    "motion": "13.1.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.5",
+    "electron": "40.10.2",
+    "prettier": "3.9.6",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vite": "8.2.0",
+    "vitest": "4.1.10"
+  }
+}
