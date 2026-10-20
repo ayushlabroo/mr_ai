@@ -2,6 +2,13 @@
 
 Repository: https://github.com/ayushlabroo/mr_ai
 
+Deployed preview: https://mr-ai-lac.vercel.app
+
+The first deployment completed from `main` commit `0bee284` on Vercel Hobby.
+Safari verification covered task planning, demo completion, Markdown download,
+and the download page showing unavailable installers. The health response
+reports `deployment-preview` and `liveEnabled: false`.
+
 This first deployment publishes the existing browser demo and a small Node.js
 preview API. It does not deploy Electron, enable model inference, or move the
 development SQLite ledger into a serverless function. No Supabase project or

@@ -9,6 +9,10 @@ No live inference has been tested with paid credentials.
 
 ## Deploy the browser preview from GitHub
 
+The browser preview is live at **https://mr-ai-lac.vercel.app** on Vercel Hobby.
+It contains local demo workflows and the desktop download page; hosted AI,
+accounts, and cloud sync remain disabled or unimplemented.
+
 Import `ayushlabroo/mr_ai` into a personal Vercel Hobby project. The included
 `vercel.json` builds the Vite browser demo and preview-only API; no provider keys,
 Supabase setup, card details, or paid integrations are needed for this first
