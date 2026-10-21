@@ -80,6 +80,11 @@ direct-write rejection, malformed-payload rejection, and anonymous access; its
 synthetic identities/workspaces were rolled back. Vercel Production has the
 project URL, publishable key and allowed app origin configured. No database
 password, service-role key or model-provider key was added to Vercel.
+The Supabase Auth Site URL is the deployed MrAI origin. GitHub/Vercel reported a
+successful deployment of commit `c52afb9`; Safari verified `/api/account` returns
+`{"user":null}` while signed out and the deployed account form is enabled.
+Real owner signup/sign-in and task-save/reload verification are awaiting the
+owner's credential handoff; do not claim these have passed yet.
 
 References checked 2026-10-21:
 

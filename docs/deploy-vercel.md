@@ -1,5 +1,10 @@
 # GitHub → Vercel preview
 
+The 2026-10-21 SaaS MVP update adds optional Supabase Free accounts and isolated
+cloud history through `/api/account` and `/api/workspace`. See
+[Supabase setup](supabase-mvp.md). The original preview and its disabled inference
+endpoints below remain available. No provider API key or paid service is enabled.
+
 Repository: https://github.com/ayushlabroo/mr_ai
 
 Deployed preview: https://mr-ai-lac.vercel.app

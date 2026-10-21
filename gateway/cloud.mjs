@@ -82,7 +82,14 @@ export function validSnapshot(tasks) {
   if (!Array.isArray(tasks) || tasks.length > 30) return false;
   const ids = new Set();
   return tasks.every((t) => {
-    if (!t || typeof t !== 'object' || !/^[\w-]{1,80}$/.test(t.id) || ids.has(t.id)) return false;
+    if (
+      !t ||
+      typeof t !== 'object' ||
+      typeof t.id !== 'string' ||
+      !/^[\w-]{1,80}$/.test(t.id) ||
+      ids.has(t.id)
+    )
+      return false;
     ids.add(t.id);
     return (
       typeof t.prompt === 'string' &&
@@ -269,7 +276,9 @@ export function createCloudAPI(env = process.env, fetcher = fetch) {
         });
         if (!result.ok)
           return failure('UNAVAILABLE', 'Cloud workspace is unavailable. Please try again.', 503);
-        const record = result.data?.[0] ?? { tasks: [], revision: 0 };
+        if (!Array.isArray(result.data) || result.data.length > 1)
+          return failure('INVALID_WORKSPACE', 'Cloud workspace could not be verified.', 502);
+        const record = result.data[0] ?? { tasks: [], revision: 0 };
         if (
           !validSnapshot(record.tasks) ||
           !Number.isSafeInteger(record.revision) ||

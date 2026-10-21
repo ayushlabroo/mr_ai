@@ -152,6 +152,20 @@ it('uses the verified user token for RLS reads, never a service-role key or supp
   expect(fetcher.mock.calls[1][1].headers.authorization).toBe(`Bearer ${access}`);
   expect(fetcher.mock.calls[1][1].headers.apikey).toBe(env.SUPABASE_PUBLISHABLE_KEY);
 });
+it('does not treat a malformed database response as an empty workspace', async () => {
+  for (const data of [
+    {},
+    [
+      { tasks: [], revision: 1 },
+      { tasks: [], revision: 2 },
+    ],
+  ]) {
+    const api = createCloudAPI(env, async (url) =>
+      url.endsWith('/user') ? json(user) : json(data),
+    );
+    expect((await api('workspace', request('workspace'))).status).toBe(502);
+  }
+});
 it('passes expected revision through atomic database save and reports stale-write conflicts', async () => {
   const fetcher = vi.fn(async (url) =>
     url.endsWith('/user') ? json(user) : json({ code: '40001' }, 409),

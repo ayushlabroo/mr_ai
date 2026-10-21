@@ -77,9 +77,7 @@ export function GatewaySettings({ gateway }: { gateway: GatewayControls }) {
           )}
         </>
       )}
-      <p className="gateway-footnote">
-        Jev is not connected. Checkout and customer charges are not enabled.
-      </p>
+      <p className="gateway-footnote">Jev is not connected. Hosted AI is not enabled.</p>
     </div>
   );
 }
@@ -150,11 +148,6 @@ export function DraftPanel({ task, gateway }: { task: Task; gateway: GatewayCont
               <span>Budget held</span>
               <strong>{usd(run.heldUsdMicros)}</strong>
             </div>
-          )}
-          {run.debitPreviewUsdMicros != null && (
-            <p className="draft-small">
-              Customer debit preview: {usd(run.debitPreviewUsdMicros)}. No customer payment taken.
-            </p>
           )}
           <div className="draft-actions">
             <button className="text-button" onClick={() => void gateway.check(task)}>

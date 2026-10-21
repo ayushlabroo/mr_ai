@@ -1,9 +1,9 @@
 # MrAI by Ayush
 
 Current scope: **personal SaaS MVP**, with no beta program or commercial launch.
-Supabase Free account and cloud-workspace integration is implemented in source;
-see [setup and verification boundaries](docs/supabase-mvp.md). Deployment and
-real account/database verification must be recorded separately from offline tests.
+Supabase Free account and cloud-workspace integration is deployed;
+see [setup and verification boundaries](docs/supabase-mvp.md). The real database
+isolation checks passed; owner sign-in and cloud-save verification are pending.
 Hosted inference remains disabled.
 
 **MrAI by Ayush** is being built as a web SaaS workspace with downloadable
@@ -89,8 +89,8 @@ Provider keys are intended to be managed centrally by authorized administrators.
 All supported desktop versions connected to the shared backend will use its active
 keys, with rotation performed server-side. Customers receive their own login/session
 credentials, not provider keys, and cannot change platform keys. Today the gateway
-reads private development environment variables; hosted user authentication and
-administrator access controls have not been implemented.
+reads private development environment variables. Web accounts use Supabase Auth;
+hosted inference and administrator provider-key controls have not been implemented.
 
 The hosting requirement is no card details and no outstanding usage bill. Use
 only a no-card free hosting plan; do not enable paid trials, add-ons, overages,
@@ -256,7 +256,8 @@ needs its own verified sandbox; renderer isolation alone does not sandbox tools.
 Do not package `.env.*`, `.data/`, or the backend's configuration inside a release.
 Unsigned release packaging and Vercel preview configuration are prepared. No
 installer has been built or published, and signing/notarization are not configured.
-The shared authenticated SaaS backend remains a separate implementation milestone.
+Web accounts and cloud history are separate from this local gateway. The shared
+metered AI gateway remains an implementation milestone.
 
 ## Validation
 
@@ -302,7 +303,7 @@ The fixture's enabled-drafting flag is limited to this simulated provider path;
 it does not enable the development gateway's live configuration. These tests
 cannot verify live-provider access or invoice reconciliation.
 
-The build, TypeScript checks, and 61 automated tests pass. Current coverage includes task
+The build, TypeScript checks, and 78 automated tests pass. Current coverage includes task
 approval/recovery, rename migration, output selection, transport validation,
 authentication, duplicate/conflicting IDs, concurrent budget reservations,
 known/unknown failure costs, cancellation, restart recovery, process ownership,
@@ -358,7 +359,8 @@ subsequently passed with synthetic provider receipts; browser and live-provider
 integration remain unverified. The latest logo/sidebar refinement
 was visually checked in static Safari frames at 390/768/1440px, including the open
 mobile navigation. Build and TypeScript checks passed again; no behavior changed.
-The app is a development foundation,
-not a production multi-user service. Next are deployment verification, tested desktop installers, authenticated tester
-accounts, shared durable accounting and enforced allowances. Live provider calls
-remain disabled until the no-card/no-debt billing requirement is verified.
+The app is a personal SaaS MVP foundation. Web account/cloud-save runtime
+verification, tested desktop installers, shared AI accounting and enforced
+allowances remain pending. Live provider calls remain disabled until the
+no-card/no-debt billing requirement is verified. Beta programs and commercial
+launch work are outside the current scope.

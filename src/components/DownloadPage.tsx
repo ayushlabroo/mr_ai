@@ -136,7 +136,9 @@ export function DownloadPage() {
       </section>
       <footer className="download-footer">
         <span>MrAI by Ayush</span>
-        <span>Preview stage · Accounts and cloud sync are in development.</span>
+        <span>
+          Desktop previews use local history. Cloud accounts are available on the website.
+        </span>
       </footer>
     </main>
   );
