@@ -9,7 +9,8 @@ const env = {
 };
 const user = { id: '11111111-1111-4111-8111-111111111111', email: 'owner@example.invalid' };
 const access = `header.${Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')}.signature_fixture`;
-const refresh = 'refresh_fixture_token_with_32_chars';
+// Supabase's legacy refresh tokens are 12 characters; do not impose JWT length.
+const refresh = 'fixture12345';
 const cookies = `__Host-mrai_access=${access}; __Host-mrai_refresh=${refresh}`;
 const request = (endpoint = 'account', method = 'GET', body, headers = {}) =>
   new Request(`${origin}/api/${endpoint}`, {

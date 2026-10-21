@@ -21,7 +21,7 @@ const sessionCookies = (data) => [
 ];
 const safeToken = (value) =>
   typeof value === 'string' &&
-  value.length >= 20 &&
+  value.length >= 12 &&
   value.length <= 6000 &&
   /^[\w.-]+$/.test(value);
 const validUser = (user) =>
