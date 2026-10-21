@@ -1,17 +1,23 @@
 # MrAI by Ayush
 
+Current scope: **personal SaaS MVP**, with no beta program or commercial launch.
+Supabase Free account and cloud-workspace integration is implemented in source;
+see [setup and verification boundaries](docs/supabase-mvp.md). Deployment and
+real account/database verification must be recorded separately from offline tests.
+Hosted inference remains disabled.
+
 **MrAI by Ayush** is being built as a web SaaS workspace with downloadable
 Windows and macOS companions. The current preview turns requests into local plans
 and documents, with blue and peach glass surfaces and an original M-shaped mark. The app supports local demos and an optional, authenticated backend for AI
 **drafting from your request and pasted notes**. It has no web research tool,
-filesystem agent, Jev connection, customer accounts, checkout, or public release.
+filesystem agent, Jev connection, checkout, or published desktop release.
 No live inference has been tested with paid credentials.
 
 ## Deploy the browser preview from GitHub
 
 The browser preview is live at **https://mr-ai-lac.vercel.app** on Vercel Hobby.
 It contains local demo workflows and the desktop download page; hosted AI,
-accounts, and cloud sync remain disabled or unimplemented.
+accounts and cloud storage require the Supabase configuration described above.
 
 Import `ayushlabroo/mr_ai` into a personal Vercel Hobby project. The included
 `vercel.json` builds the Vite browser demo and preview-only API; no provider keys,

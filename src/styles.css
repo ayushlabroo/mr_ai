@@ -2752,3 +2752,67 @@ html[data-desktop='true'] .window-grip span {
     padding: 20px;
   }
 }
+/* Account controls reuse the workspace's existing blue/peach surface tokens. */
+.account-section {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.account-section h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+.account-section p {
+  color: var(--ink-600);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.account-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.account-form label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.account-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-base);
+  color: var(--ink-900);
+  font: inherit;
+}
+.account-form input:focus-visible {
+  outline: 2px solid var(--primary-700);
+  outline-offset: 2px;
+}
+.account-form .text-button {
+  justify-self: start;
+  text-align: left;
+}
+.account-loading {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  gap: 16px;
+}
+.account-loading > svg {
+  width: 48px;
+  height: 48px;
+}
+.account-loading h1 {
+  font-size: 24px;
+}
+.account-loading p {
+  max-width: 520px;
+}

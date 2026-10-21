@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { FormEvent } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   ArrowDownToLine,
@@ -78,14 +78,30 @@ const modeLabels: Record<RunMode, string> = {
   thorough: 'Thorough',
 };
 
-export default function App() {
-  const [tasks, setTasks] = useState<Task[]>(loadTasks);
+export default function App({
+  initialTasks,
+  onTasksChange,
+  accountPanel,
+  cloudEmail,
+  cloudMessage,
+}: {
+  initialTasks?: Task[];
+  onTasksChange?: (tasks: Task[]) => void;
+  accountPanel?: ReactNode;
+  cloudEmail?: string;
+  cloudMessage?: string;
+} = {}) {
+  const [tasks, setTasks] = useState<Task[]>(() => initialTasks ?? loadTasks());
   const [screen, setScreen] = useState<Screen>('home');
   const [activeId, setActiveId] = useState<string | null>(null);
   const [prompt, setPrompt] = useState('');
   const [mode, setMode] = useState<RunMode>('auto');
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(
+    () =>
+      import.meta.env.MODE === 'visual-review' &&
+      new URLSearchParams(window.location.search).get('settings') === '1',
+  );
   const [clearOpen, setClearOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -108,8 +124,9 @@ export default function App() {
   const unresolvedDrafts = tasks.some((task) => pendingDraft(task.draft));
 
   useEffect(() => {
-    setStorageWarning(!saveTasks(tasks));
-  }, [tasks]);
+    if (onTasksChange) onTasksChange(tasks);
+    else setStorageWarning(!saveTasks(tasks));
+  }, [tasks, onTasksChange]);
   useEffect(() => {
     directoryRef.current?.setAttribute('webkitdirectory', '');
     document.documentElement.dataset.desktop = window.ayra ? 'true' : 'false';
@@ -205,7 +222,9 @@ export default function App() {
     event.preventDefault();
     if (!prompt.trim()) return;
     if (tasks.length >= MAX_TASKS) {
-      setToast('This preview holds 30 tasks. Clear local history in Settings to start fresh.');
+      setToast(
+        'This workspace holds 30 tasks. Export your documents and clear history in Settings to start fresh.',
+      );
       return;
     }
     const task = createTask(prompt, mode);
@@ -382,14 +401,14 @@ export default function App() {
             </span>
             <div>
               <strong>A little space, just for you.</strong>
-              <p>Task history stays on this device.</p>
+              <p>{cloudEmail ? cloudMessage : 'Task history stays on this device.'}</p>
             </div>
           </div>
           <button className="profile-button" onClick={() => setSettingsOpen(true)}>
             <span className="avatar">A</span>
             <span>
-              <strong>Your workspace</strong>
-              <small>Private preview</small>
+              <strong>{cloudEmail ?? 'Your workspace'}</strong>
+              <small>{cloudEmail ? 'Cloud workspace' : 'Local workspace'}</small>
             </span>
             <Settings2 size={17} />
           </button>
@@ -760,19 +779,12 @@ export default function App() {
           <div>
             <h3>MrAI by Ayush.</h3>
             <p>
-              Your personal agent workspace. Try local demos, or connect a backend gateway for
-              model-written drafts. Subscriptions and checkout are not enabled.
+              Your personal agent workspace. Plan a task, run a local demo, and save a document.
             </p>
           </div>
         </div>
+        {accountPanel}
         <GatewaySettings gateway={gateway} />
-        <div className="setting-row">
-          <div>
-            <strong>Original beta planning target</strong>
-            <span>Not a currency conversion of your gateway's USD budget.</span>
-          </div>
-          <strong className="tnum">₹1,500 / mo</strong>
-        </div>
         <div className="setting-row">
           <div>
             <strong>Selected folder</strong>
@@ -793,10 +805,11 @@ export default function App() {
           </button>
         )}
         <div className="settings-data">
-          <h3>On this device</h3>
+          <h3>{cloudEmail ? 'In your account' : 'On this device'}</h3>
           <p>
-            Your last 30 tasks are kept in local browser storage. This preview has no encrypted
-            vault or account sync.
+            {cloudEmail
+              ? 'Up to 30 tasks and their documents are saved to your account. Local demo history is kept separately on this device.'
+              : 'Your last 30 tasks are kept in local browser storage. Sign in on the website to save new tasks to your account.'}
           </p>
           <button
             className="button-secondary"
@@ -807,19 +820,24 @@ export default function App() {
               setClearOpen(true);
             }}
           >
-            Clear local task history
+            {cloudEmail ? 'Clear account task history' : 'Clear local task history'}
           </button>
           {unresolvedDrafts && <p>Finish or cancel active AI drafts before clearing history.</p>}
         </div>
       </Modal>
       <ClearHistoryModal
         open={clearOpen}
+        cloud={!!cloudEmail}
         onOpenChange={setClearOpen}
         onClear={() => {
           setTasks([]);
           setActiveId(null);
           setScreen('home');
-          setToast('Local task history cleared.');
+          setToast(
+            cloudEmail
+              ? 'Task history cleared. Saving to your account…'
+              : 'Local task history cleared.',
+          );
         }}
       />
       <Modal
@@ -938,10 +956,12 @@ export default function App() {
 // The explicit confirmation is local to the destructive history action.
 function ClearHistoryModal({
   open,
+  cloud = false,
   onOpenChange,
   onClear,
 }: {
   open: boolean;
+  cloud?: boolean;
   onOpenChange: (open: boolean) => void;
   onClear: () => void;
 }) {
@@ -949,8 +969,12 @@ function ClearHistoryModal({
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="Clear local task history?"
-      description="This removes all tasks and generated briefs from this device. Any files you downloaded will stay where you saved them."
+      title={cloud ? 'Clear account task history?' : 'Clear local task history?'}
+      description={
+        cloud
+          ? 'This permanently removes all tasks and generated briefs from your account across devices. Export anything you want to keep first. Downloaded files are unaffected.'
+          : 'This removes all tasks and generated briefs from this device. Any files you downloaded will stay where you saved them.'
+      }
     >
       <div className="confirmation-actions">
         <button className="button-secondary" onClick={() => onOpenChange(false)}>

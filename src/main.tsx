@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MotionConfig } from 'motion/react';
-import App from './App';
+import { AccountWorkspace } from './components/AccountWorkspace';
 import { Styleguide } from './components/Styleguide';
 import { DownloadPage } from './components/DownloadPage';
 import './styles.css';
@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           window.location.pathname.endsWith('/styleguide.html')) ? (
         <Styleguide />
       ) : (
-        <App />
+        <AccountWorkspace />
       )}
     </MotionConfig>
   </React.StrictMode>,
